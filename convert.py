@@ -4,6 +4,7 @@
 from __future__ import print_function
 
 input_file = 'Philadelphia_trips.txt'
+#input_file = 'Barcelona_trips.txt'
 out_file = 'out.txt'
 mat_out_file = 'mat_out.txt'
 dimension = None
@@ -19,13 +20,19 @@ def data_reader(str,id):
 	if len(str) <= 1:
 	 return None
 	all_data = str.split(";")
+	list_data = []
 	for a_data in all_data:
 
 		paired_data = a_data.strip().split(":")
-		des = paired_data[0].strip()
-		flow = paired_data[1].strip()
 
-		return id,des,flow
+		if len(paired_data) > 1:
+			des = paired_data[0].strip()
+			flow = paired_data[1].strip()
+
+			list_data.append((id,des,flow))
+
+
+	return list_data
 output_file = open(out_file, 'w')
 mat_output_file = open(mat_out_file, 'w')
 
@@ -70,13 +77,15 @@ with open(input_file) as f:
     		read_start = True
     		#print line
     	elif read_start:
-    		new_data =  data_reader(line,reader_id)
-    		if new_data:
-    			id,des,flow = new_data
-    			#print(int(des))
-    			demand_matrix[reader_id,int(des)] = flow
-    			#print(new_data)
-    			output_file.write("%s %s %s\n"% (id,des,flow))
+    		list_data =  data_reader(line,reader_id)
+    		if list_data:
+    			for new_data in list_data:
+
+    				id,des,flow = new_data
+    				#print(int(des))
+    				demand_matrix[reader_id,int(des)] = flow
+    				#print(new_data)
+    				output_file.write("%s %s %s\n"% (id,des,flow))
     print("list creation ended....")
 
 print("demand matrix creation in process....")
